@@ -1,0 +1,53 @@
+name: Deploy API
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone code
+        uses: actions/checkout@v4
+
+      - name: Build and test code
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Pame.sln
+
+      - name: Build
+        run: dotnet build Pame.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test Pame.sln --no-build --verbosity normal
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x'
+
+      - name: Publish
+        run: dotnet publish Pame.Api/Pame.Api.csproj -c Release -o ./publish
+
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.vps_host }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH }}
+          source: "./publish"
+          target: "/pagarme"
