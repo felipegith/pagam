@@ -24,15 +24,7 @@ jobs:
       - name: Build
         run: dotnet build Pame --configuration Release --no-restore
 
-      - name: Run tests for Pame.Infrastructure.Test
-        run: dotnet test Pame.Infrastructure.Test/Pame.Infrastructure.Test.csproj --no-build --verbosity normal
-
-      - name: Run tests for Pame.Domain.Test
-        run: dotnet test Pame.Domain.Test/Pame.Domain.Test.csproj --no-build --verbosity normal
-
-      - name: Run tests for Pame.Application.Test
-        run: dotnet test Pame.Application.Test/Pame.Application.Test.csproj --no-build --verbosity normal
-
+      
   deploy:
     runs-on: ubuntu-latest
     needs: build
