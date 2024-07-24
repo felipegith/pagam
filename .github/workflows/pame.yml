@@ -19,7 +19,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore dependencies
-        run: dotnet restore Pame.sln
+        run: dotnet restore Pame
 
       - name: Build
         run: dotnet build Pame.sln --configuration Release --no-restore
