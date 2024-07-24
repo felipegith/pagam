@@ -1,4 +1,4 @@
-name: Deploy API
+name: Deploy to VPS
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
       - name: Clone code
         uses: actions/checkout@v4
 
-      - name: Build and test code
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.x'
@@ -24,8 +24,14 @@ jobs:
       - name: Build
         run: dotnet build Pame --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test Pame --no-build --verbosity normal
+      - name: Run tests for Pame.Infrastructure.Test
+        run: dotnet test Pame.Infrastructure.Test/Pame.Infrastructure.Test.csproj --no-build --verbosity normal
+
+      - name: Run tests for Pame.Domain.Test
+        run: dotnet test Pame.Domain.Test/Pame.Domain.Test.csproj --no-build --verbosity normal
+
+      - name: Run tests for Pame.Application.Test
+        run: dotnet test Pame.Application.Test/Pame.Application.Test.csproj --no-build --verbosity normal
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,7 +52,7 @@ jobs:
       - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.vps_host }}
+          host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH }}
           source: "./publish"
