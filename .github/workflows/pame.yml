@@ -39,7 +39,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Publicação
-        run: dotnet publish Pame.Api/Pame.Api.csproj -c Release -o .
+        run: dotnet publish Pame.Api/Pame.Api.csproj -c Release -o ./publish
 
       - name: Enviando arquivos para a VPS através de SCP
         uses: appleboy/scp-action@v0.1.7
@@ -47,5 +47,5 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH }}
-          source: "."
+          source: "./publish"
           target: "/pagarme"
